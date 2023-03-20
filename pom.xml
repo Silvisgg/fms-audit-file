@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.9</version>
+		<version>2.6.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>silgar</groupId>
@@ -15,6 +15,7 @@
 	<description>Store objets in silgar</description>
 	<properties>
 		<java.version>11</java.version>
+		<minio.version>8.1.0</minio.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -23,7 +24,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
 		</dependency>
 
 		<dependency>
@@ -51,6 +52,12 @@
 			<groupId>org.springframework.restdocs</groupId>
 			<artifactId>spring-restdocs-mockmvc</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.minio</groupId>
+			<artifactId>minio</artifactId>
+			<scope>provided</scope> <!-- para compilar en local quitar scope provided -->
+			<version>${minio.version}</version>
 		</dependency>
 	</dependencies>
 

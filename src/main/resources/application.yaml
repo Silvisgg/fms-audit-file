@@ -1,0 +1,21 @@
+spring:
+
+  ## Minio
+  minio:
+    url: https://play.min.io
+    bucket: filemanagerbucket
+    accessKey: Q3AM3UQ867SPQQA43P2F
+    secretKey: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+    connectTimeout: 10
+    writeTimeout: 60
+    readTimeout: 10
+    checkBucket: true
+    createBucket: true
+
+  ## MULTIPART (MultipartProperties)
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 5KB
+      max-file-size: 5MB
+      max-request-size: 10MB
