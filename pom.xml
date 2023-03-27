@@ -56,7 +56,6 @@
 		<dependency>
 			<groupId>io.minio</groupId>
 			<artifactId>minio</artifactId>
-			<scope>provided</scope> <!-- para compilar en local quitar scope provided -->
 			<version>${minio.version}</version>
 		</dependency>
 	</dependencies>
