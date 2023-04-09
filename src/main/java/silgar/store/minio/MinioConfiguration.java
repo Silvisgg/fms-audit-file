@@ -11,12 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import silgar.store.exception.BadRequestException;
+import silgar.store.exception.ConflictException;
+import silgar.store.exception.NotFoundException;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 @Configuration
 public class MinioConfiguration {
@@ -27,9 +27,10 @@ public class MinioConfiguration {
     private MinioConfigurationProperties minioConfigurationProperties;
 
     @Bean
-    public MinioClient minioClient() throws IOException, InvalidKeyException, NoSuchAlgorithmException, MinioException {
+    public MinioClient minioClient()  {
 
         MinioClient minioClient;
+        boolean b;
         if (!configuredProxy()) {
             minioClient = MinioClient.builder()
                     .endpoint(minioConfigurationProperties.getUrl())
@@ -49,12 +50,16 @@ public class MinioConfiguration {
         );
 
         if (minioConfigurationProperties.isCheckBucket()) {
-            try {
+
                 LOGGER.debug("Checking if bucket {} exists", minioConfigurationProperties.getBucket());
                 BucketExistsArgs existsArgs = BucketExistsArgs.builder()
                         .bucket(minioConfigurationProperties.getBucket())
                         .build();
-                boolean b = minioClient.bucketExists(existsArgs);
+                try {
+                    b = minioClient.bucketExists(existsArgs);
+                } catch (Exception e){
+                    throw new ConflictException("Error checking if bucket exists. ", e, false, true);
+                }
                 if (!b) {
                     if (minioConfigurationProperties.isCreateBucket()) {
                         try {
@@ -63,16 +68,12 @@ public class MinioConfiguration {
                                     .build();
                             minioClient.makeBucket(makeBucketArgs);
                         } catch (Exception e) {
-                            throw new MinioException("Cannot create bucket");
+                            throw new BadRequestException("Cannot create bucket");
                         }
                     } else {
-                        throw new IllegalStateException("Bucket does not exist: " + minioConfigurationProperties.getBucket());
+                        throw new NotFoundException("Bucket does not exist: " + minioConfigurationProperties.getBucket());
                     }
                 }
-            } catch (Exception e) {
-                LOGGER.error("Error while checking bucket", e);
-                throw e;
-            }
         }
 
         return minioClient;
